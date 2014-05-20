@@ -17,11 +17,19 @@ SYNOPSIS
     The format of this file is identical to a Godeps file.
 
 USAGE
-      $ gpm             # Same as 'install'.
-      $ gpm install     # Parses the Godeps file, installs dependencies and sets
-                        # them to the appropriate version.
-      $ gpm version     # Outputs version information
-      $ gpm help        # Prints this message
+      $ gpm git             # Same as 'install'.
+      $ gpm git version     # Outputs version information
+      $ gpm git help        # Prints this message
+
+FILE FORMAT
+
+    Godeps-Git files have three possible fields per line. The first two
+    are required. They are:
+
+    - The Git URL to the repository (e.g. git@bitbucket:/foo/bar)
+    - The Go package name (e.g. bitbucket.org/foo/bar)
+    - A git reference (e.g. a commit SHA or a tag)
+
 EOF
 }
 
@@ -38,9 +46,9 @@ set_dependencies() {
          -e "$install_path/.bzr/checkout/lock" ]] && wait
 
       if [[ -e "$install_path" ]]; then
-        echo ">> Git Pull on "$package""
+        echo ">> Git Fetch "$package""
         cd "$install_path"
-        git pull origin master
+        git fetch --all
         cd -
       else
         echo ">> Cloning package "$source" into "$package""
