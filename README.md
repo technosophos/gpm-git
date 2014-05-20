@@ -16,6 +16,15 @@ Using this plugin, you can use GPM to...
 
 ## Installation
 
+Put `gpm-git` in your `$PATH`. You can do this easily by running `make
+install`.
+
+TODO:
+
+- Add homebrew support.
+- Test on Linux.
+- Add testing target.
+
 ## Usage
 
 `gpm-git` uses a special file called `Gopath-Git` to read the repos that
