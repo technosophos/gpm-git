@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+set -eu
+
+## Functions/
+usage() {
+cat << EOF
+SYNOPSIS
+
+    gpm-git provides Git-based cloning of Go packages into a
+    GVP/GPM-managed system.
+
+    This is useful when the Git repositories you use are not retrievable
+    via "go get". (e.g. when they are behind authenticated git servers.)
+
+    Use a "Godeps-Git" file to track these internal dependencies.
+    The format of this file is identical to a Godeps file.
+
+USAGE
+      $ gpm             # Same as 'install'.
+      $ gpm install     # Parses the Godeps file, installs dependencies and sets
+                        # them to the appropriate version.
+      $ gpm version     # Outputs version information
+      $ gpm help        # Prints this message
+EOF
+}
+
+# Iterates over Godep file dependencies and sets
+# the specified version on each of them.
+set_dependencies() {
+  local deps=$(sed 's/#.*//;/^\s*$/d' < $1) || echo ""
+
+  while read source package version; do
+    (
+      local install_path="${GOPATH%%:*}/src/${package%%/...}"
+      [[ -e "$install_path/.git/index.lock" ||
+         -e "$install_path/.hg/store/lock"  ||
+         -e "$install_path/.bzr/checkout/lock" ]] && wait
+
+      if [[ -e "$install_path" ]]; then
+        echo ">> Git Pull on "$package""
+        cd "$install_path"
+        git pull origin master
+        cd -
+      else
+        echo ">> Cloning package "$source" into "$package""
+        git clone "$source" "$install_path"
+      fi
+      
+
+      echo ">> Setting $package to version $version"
+      cd $install_path
+      [ -d .git ] && git checkout -q      "$version"
+    ) &
+  done < <(echo "$deps")
+  wait
+  echo ">> All Done"
+}
+## /Functions
+
+## Command Line Parsing
+case "${1:-"install"}" in
+  "version")
+    echo ">> gpm-git v0.0.1"
+    ;;
+  "install")
+    deps_file="${2:-"Godeps-Git"}"
+    [[ -f "$deps_file" ]] || (echo ">> $deps_file file does not exist." && exit 1)
+    (which go > /dev/null) ||
+      ( echo ">> Go is currently not installed or in your PATH" && exit 1)
+    set_dependencies $deps_file
+    ;;
+  "help")
+    usage
+    ;;
+  *)
+    usage && exit 1
+    ;;
+esac
