@@ -52,6 +52,7 @@ set_dependencies() {
         cd -
       else
         echo ">> Cloning package "$source" into "$package""
+        mkdir -p "$install_path"
         git clone "$source" "$install_path"
       fi
       

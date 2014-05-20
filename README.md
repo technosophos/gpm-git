@@ -35,11 +35,14 @@ Here's an example file:
 
 ```
 
-# Get head of the foo/bar project
-git@bitbucket.org:foo/bar bitbucket.org/foo/bar
+# Get the tip of master of the foo/bar project
+git@bitbucket.org:foo/bar bitbucket.org/foo/bar master
+# This works, too
+# git@bitbucket.org:foo/bar bitbucket.org/foo/bar
 
 # Get a specific commit or tag off of foo/baz
 git@bitbucket.org:foo/baz bitbucket.org/foo/baz 2feb1ef
+git@bitbucket.org:foo/argh bitbucket.org/foo/argh 1.2.3
 ```
 
 Once you have a `Gopath-Git` file, you can use `gpm-git` like this:
