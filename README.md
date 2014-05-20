@@ -83,3 +83,6 @@ For performance reasons, re-running `gpm git` will *not* re-clone each
 repository. Instead it will `git fetch --all`. I did this because large
 git repos can take a *really* long time to download.
 
+## See Also
+
+* [gpm-local](https://github.com/technosophos/gpm-local)
