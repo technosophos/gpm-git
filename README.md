@@ -62,10 +62,10 @@ $ gpm git
 
 The above will attempt to clone (or `fetch --all` if the clone exists)
 the given URL, and then place it in the appropriate location in
-`.gopath`.
+`.godeps`.
 
 Once you have a repo initialized, you can manage it directly by going
-into `.gopath/src`, or you can simply update the package by calling `gpm
+into `.godeps/src`, or you can simply update the package by calling `gpm
 git` again.
 
 ## Under the Hood
@@ -74,7 +74,7 @@ If you're interested in knowing how `gpm-git` works, here's the
 high-level overview:
 
 1. It reads the `Gopath-Git` file line by line, breaking it into fields.
-2. For each `GIT_URL` it creates a new package path in `.gopath/src` and
+2. For each `GIT_URL` it creates a new package path in `.godeps/src` and
    then clones the git repository into it. It uses whichever version of
   `git` it finds on the $PATH.
 3. If a VERSION is set, it checks out that particular version.
