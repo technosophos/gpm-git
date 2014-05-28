@@ -70,7 +70,7 @@ set_dependencies() {
 ## Command Line Parsing
 case "${1:-"install"}" in
   "version")
-    echo ">> gpm-git v0.0.1"
+    echo ">> gpm-git v1.0.0"
     ;;
   "install")
     deps_file="${2:-"Godeps-Git"}"
