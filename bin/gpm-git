@@ -55,11 +55,10 @@ set_dependencies() {
         mkdir -p "$install_path"
         git clone "$source" "$install_path"
       fi
-      
 
       echo ">> Setting $package to version $version"
       cd $install_path
-      [ -d .git ] && git checkout -q      "$version"
+      [ -d .git ] && git merge --ff-only origin && git checkout -q      "$version"
     ) &
   done < <(echo "$deps")
   wait
