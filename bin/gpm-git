@@ -28,10 +28,12 @@ FILE FORMAT
 
     - The Git URL to the repository (e.g. git@bitbucket:/foo/bar)
     - The Go package name (e.g. bitbucket.org/foo/bar)
-    - A git reference (e.g. a commit SHA or a tag)
+    - A git reference (e.g. a commit SHA, tag, or branch)
 
 EOF
 }
+
+VERSION="v1.0.1"
 
 # Iterates over Godep file dependencies and sets
 # the specified version on each of them.
@@ -49,6 +51,7 @@ set_dependencies() {
         echo ">> Git Fetch "$package""
         cd "$install_path"
         git fetch --all
+        # git pull --ff-only origin
         cd -
       else
         echo ">> Cloning package "$source" into "$package""
@@ -56,9 +59,19 @@ set_dependencies() {
         git clone "$source" "$install_path"
       fi
 
-      echo ">> Setting $package to version $version"
+      # Figure out, based on ref, what type of reference this is.
+      local vtype="commit"
+      git show-ref -q "origin/$version" && vtype="branch"
+      git show-ref -q "tags/$version" && vtype="tag"
+
+      echo ">> Setting $package to $vtype $version"
       cd $install_path
-      [ -d .git ] && git merge --ff-only origin && git checkout -q      "$version"
+      [ -d .git ] && git checkout -q "$version"
+
+      # Handle case where branch changed. We need to get to the tip
+      # of that branch.
+      [ $vtype == "branch" ] && git merge --ff-only origin $version
+
     ) &
   done < <(echo "$deps")
   wait
@@ -69,7 +82,7 @@ set_dependencies() {
 ## Command Line Parsing
 case "${1:-"install"}" in
   "version")
-    echo ">> gpm-git v1.0.0"
+    echo ">> gpm-git $VERSION"
     ;;
   "install")
     deps_file="${2:-"Godeps-Git"}"
