@@ -42,7 +42,12 @@ set_dependencies() {
 
   while read source package version; do
     (
-      local install_path="${GOPATH%%:*}/src/${package%%/...}"
+      if echo "$source" | grep "github.com" >/dev/null; then
+        local repo=$(echo "$source" | sed -n 's|.*github\.com/\(.*\)\.git|\1|p')
+        local install_path="${GOPATH%%:*}/src/github.com/${repo}"
+      else
+        local install_path="${GOPATH%%:*}/src/${package%%/...}"
+      fi
       [[ -e "$install_path/.git/index.lock" ||
          -e "$install_path/.hg/store/lock"  ||
          -e "$install_path/.bzr/checkout/lock" ]] && wait
